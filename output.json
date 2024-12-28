@@ -1,0 +1,7 @@
+{
+  "ec2": {
+    "sensitive": false,
+    "type": "string",
+    "value": "3.142.241.22"
+  }
+}
