@@ -10,7 +10,6 @@
 
 
 #terraform deployment
-#variables:
 TERRAFORM_DIR="/home/ubuntu/terraform"
 cd $TERRAFORM_DIR
 
@@ -47,17 +46,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 terraform output -json > output.json
-#!/bin/bash
-
-# Export AWS credentials
-export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 # Run Terraform and capture outputs
-terraform output -json > /home/ubuntu/terraform/output.json
+terraform output -json > $TERRAFORM_DIR/output.json
 
 # Check if the JSON file was created successfully
-if [ ! -f /home/ubuntu/terraform/output.json ]; then
+if [ ! -f output.json ]; then
   echo "Failed to create output.json"
   exit 1
 fi
@@ -65,17 +59,19 @@ fi
 sudo apt-get install jq
 
 # Read Terraform output from JSON file
-ec2_ip=$(jq -r '.ec2.value' /home/ubuntu/terraform/output.json)
+ec2_ip=$(jq -r '.ec2.value' output.json)
 
 # Create the Ansible hosts file
 cat <<EOF > hosts.yml
 ${ec2_ip}
 EOF
-
 # Print success message
-echo "Ansible vars file created successfully."
+echo "Ansible hosts.yml file created successfully."
 
-cd /home/ubuntu/00/
+ANSIBLE_DIR="/home/ubuntu/00/"
+cd $ANSIBLE_DIR
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
-# Optionally, run your Ansible playbook
-ansible-playbook -i /home/ubuntu/terraform/hosts.yml main.yml
+# run Ansible playbook
+ansible-playbook -i $TERRAFORM_DIR/hosts.yml main.yml

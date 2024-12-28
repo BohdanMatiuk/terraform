@@ -2,6 +2,6 @@
   "ec2": {
     "sensitive": false,
     "type": "string",
-    "value": "3.142.241.22"
+    "value": "3.144.14.25"
   }
 }
